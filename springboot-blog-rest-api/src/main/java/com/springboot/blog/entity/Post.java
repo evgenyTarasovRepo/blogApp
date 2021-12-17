@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Entity
 @Table(name = "posts", uniqueConstraints = {@UniqueConstraint(columnNames = {"title"})})
 public class Post {
