@@ -1,6 +1,7 @@
 package com.springboot.blog.controller;
 
 import com.springboot.blog.dto.PostDto;
+import com.springboot.blog.entity.Post;
 import com.springboot.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,5 +31,25 @@ public class PostController {
     @GetMapping()
     public List<PostDto> getAllPosts() {
         return postService.getAllPosts();
+    }
+
+    //get post by id
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") long id){
+        return ResponseEntity.ok(postService.getPostById(id));
+    }
+
+    //update post by id
+    @PutMapping("/{id}")
+    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable(name = "id") long id) {
+        PostDto postResponse = postService.updatePost(postDto, id);
+        return new ResponseEntity<PostDto>(postResponse, HttpStatus.OK);
+    }
+
+    //delete post by id
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePost(@PathVariable(name = "id") long id) {
+        postService.deletePostById(id);
+        return new ResponseEntity<>("Post entity has been deleted successfully", HttpStatus.OK);
     }
 }

@@ -2,6 +2,7 @@ package com.springboot.blog.service.service_impl;
 
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.entity.Post;
+import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.repositories.PostRepository;
 import com.springboot.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,38 @@ public class PostServiceImpl implements PostService {
 
     }
 
+    @Override
+    public PostDto getPostById(long id) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                "Post", "Id", id
+        ));
+        return mapToDTO(post);
+    }
+
+    @Override
+    public PostDto updatePost(PostDto postDto, long id) {
+
+        //get post by id from DB
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                "Post", "Id", id
+        ));
+
+        post.setTitle(postDto.getTitle());
+        post.setDescription(postDto.getDescription());
+        post.setContent(postDto.getContent());
+
+        Post updatedPost = postRepository.save(post);
+
+        return mapToDTO(updatedPost);
+    }
+
+    @Override
+    public void deletePostById(long id) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+                "Post", "Id", id
+        ));
+        postRepository.delete(post);
+    }
 
     //convert Entity to DTO
     private PostDto mapToDTO(Post post) {
