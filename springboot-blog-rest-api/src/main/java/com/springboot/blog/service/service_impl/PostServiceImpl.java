@@ -1,6 +1,6 @@
 package com.springboot.blog.service.service_impl;
 
-import com.springboot.blog.dto.PostDto;
+import com.springboot.blog.payload.PostDto;
 import com.springboot.blog.entity.Post;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.payload.PostResponse;
