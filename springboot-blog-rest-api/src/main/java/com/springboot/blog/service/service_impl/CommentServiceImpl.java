@@ -8,6 +8,7 @@ import com.springboot.blog.payload.CommentDto;
 import com.springboot.blog.repositories.CommentRepository;
 import com.springboot.blog.repositories.PostRepository;
 import com.springboot.blog.service.CommentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,13 @@ public class CommentServiceImpl implements CommentService {
 
     private CommentRepository commentRepository;
     private PostRepository postRepository;
+    private ModelMapper mapper;
 
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, ModelMapper mapper) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -47,8 +50,9 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentDto> getCommentsByPostId(long postId) {
 
         //retrieve comments by post id
-        List<Comment> comments = commentRepository.findById(postId);
+        List<Comment> comments = commentRepository.findByPostId(postId);
 
+        String val = "qwqweqwe";
         //convert comments entities to dto's
         return comments.stream().map(comment -> mapToDto(comment)).collect(Collectors.toList());
     }
@@ -62,9 +66,7 @@ public class CommentServiceImpl implements CommentService {
         //retrieve comment by id
         Comment comment = retrieveComment(commentId);
 
-        if(comment.getPost().getId() == post.getId()){
-        }
-        else {
+        if (!comment.getPost().getId().equals(post.getId())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
         }
 
@@ -79,9 +81,7 @@ public class CommentServiceImpl implements CommentService {
         //retrieve comment by id
         Comment comment = retrieveComment(commentId);
 
-        if(comment.getPost().getId() == post.getId()){
-        }
-        else {
+        if (!comment.getPost().getId().equals(post.getId())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
         }
 
@@ -102,9 +102,7 @@ public class CommentServiceImpl implements CommentService {
         //retrieve comment by id
         Comment comment = retrieveComment(commentId);
 
-        if(comment.getPost().getId() == post.getId()){
-        }
-        else {
+        if (!comment.getPost().getId().equals(post.getId())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
         }
 
@@ -122,21 +120,25 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private CommentDto mapToDto(Comment comment) {
-        CommentDto commentDto = new CommentDto();
-        commentDto.setId(comment.getId());
-        commentDto.setName(comment.getName());
-        commentDto.setEmail(comment.getEmail());
-        commentDto.setBody(comment.getBody());
+        CommentDto commentDto = mapper.map(comment, CommentDto.class);
+
+//        CommentDto commentDto = new CommentDto();
+//        commentDto.setId(comment.getId());
+//        commentDto.setName(comment.getName());
+//        commentDto.setEmail(comment.getEmail());
+//        commentDto.setBody(comment.getBody());
 
         return commentDto;
     }
 
     private Comment mapToEntity(CommentDto commentDto) {
-        Comment comment = new Comment();
-        comment.setId(commentDto.getId());
-        comment.setName(commentDto.getName());
-        comment.setEmail(commentDto.getEmail());
-        comment.setBody(commentDto.getBody());
+        Comment comment = mapper.map(commentDto, Comment.class);
+
+//        Comment comment = new Comment();
+//        comment.setId(commentDto.getId());
+//        comment.setName(commentDto.getName());
+//        comment.setEmail(commentDto.getEmail());
+//        comment.setBody(commentDto.getBody());
 
         return comment;
     }
